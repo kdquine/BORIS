@@ -9838,6 +9838,7 @@ item []:
             self.switch_playing_mode()
             return
 
+
         # play / pause with space bar
         if ek == Qt.Key_Space:
             if self.pj[OBSERVATIONS][self.observationId][TYPE] in [MEDIA]:
@@ -11226,7 +11227,7 @@ item []:
 
             if self.playMode == FFMPEG:
                 currentTime = self.FFmpegGlobalFrame / self.fps
-                if int((currentTime - self.fast) * self.fps) > 0:
+                if int((currentTime - self.fast * self.play_rate) * self.fps) > 0:
                     self.FFmpegGlobalFrame = int((currentTime - self.fast) * self.fps)
                 else:
                     self.FFmpegGlobalFrame = 0   # position to init
@@ -11239,7 +11240,7 @@ item []:
                     self.dw_player[0].media_durations[0:self.dw_player[0].media_list.
                                                       index_of_item(self.dw_player[0].
                                                                     mediaplayer.get_media())]) +
-                           self.dw_player[0].mediaplayer.get_time() - self.fast * 1000)
+                           self.dw_player[0].mediaplayer.get_time() - int(self.fast * self.play_rate * 1000))
 
                 if newTime < self.fast * 1000:
                     newTime = 0
@@ -11264,7 +11265,7 @@ item []:
 
             if self.playMode == FFMPEG:
 
-                self.FFmpegGlobalFrame += self.fast * self.fps
+                self.FFmpegGlobalFrame += (self.fast * self.play_rate) * self.fps
 
                 if self.FFmpegGlobalFrame * (1000 / self.fps) >= sum(self.dw_player[0].media_durations):
                     logging.debug("end of last media")
@@ -11283,7 +11284,8 @@ item []:
                     self.dw_player[0].media_durations[0:self.dw_player[0].media_list.
                                                       index_of_item(self.dw_player[0].
                                                                     mediaplayer.get_media())])
-                                               + self.dw_player[0].mediaplayer.get_time() + self.fast * 1000)
+                                               + self.dw_player[0].mediaplayer.get_time() +
+                                                 int(self.fast * self.play_rate * 1000))
 
                 self.seek_mediaplayer(newTime)
 
